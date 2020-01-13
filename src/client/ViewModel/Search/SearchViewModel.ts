@@ -244,13 +244,13 @@ class SearchViewModel extends ViewModel {
             this.station = Number(m.route.param('channel'));
         }
 
-        if (typeof m.route.param('genre1') !== 'undefined') {
-            this.genrelv1 = Number(m.route.param('genre1'));
-        }
-
-        if (typeof m.route.param('genre2') !== 'undefined') {
-            this.genrelv2 = Number(m.route.param('genre2'));
-        }
+//        if (typeof m.route.param('genre1') !== 'undefined') {
+//            this.genrelv1 = Number(m.route.param('genre1'));
+//        }
+//
+//        if (typeof m.route.param('genre2') !== 'undefined') {
+//            this.genrelv2 = Number(m.route.param('genre2'));
+//        }
     }
 
     /**
@@ -262,7 +262,7 @@ class SearchViewModel extends ViewModel {
         this.directory = '';
         this.recordedFormat = '';
         this.encodeModes = [
-            { mode: -1, directory: '', },
+            { mode: 0, directory: '', },
             { mode: -1, directory: '', },
             { mode: -1, directory: '', },
         ];
@@ -447,7 +447,7 @@ class SearchViewModel extends ViewModel {
             this.extended = false;
         } else if (this.keyword.length > 0 && (!this.title && !this.description && !this.extended)) {
             this.title = true;
-            this.description = true;
+            this.description = false;
         }
 
         if (this.ignoreKeyword.length === 0) {
