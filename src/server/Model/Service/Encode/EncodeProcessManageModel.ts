@@ -39,6 +39,7 @@ class EncodeProcessManageModel extends Model implements EncodeProcessManageModel
      * @param cmd: cmd string %INPUT% と %OUTPUT% を input と output で置換する
      * @param priority: number 大きいほど優先度が高くなる
      * @param spawnOption?:SpawnOptions
+     *        全ての環境変数を渡す場合は spawnOption.env は null or undefined とすること
      * @return Promise<ChildProcess>
      */
     public create(input: string, output: string | null, cmd: string, priority: number, spawnOption?: SpawnOptions): Promise<ChildProcess> {
@@ -159,7 +160,7 @@ class EncodeProcessManageModel extends Model implements EncodeProcessManageModel
             }
         }
 
-        const child = spawn(cmds.bin, cmds.args, spawnOption);
+        const child = typeof spawnOption === 'undefined' ? spawn(cmds.bin, cmds.args) : spawn(cmds.bin, cmds.args, spawnOption);
         const createTime = new Date().getTime();
 
         // this.childs から削除

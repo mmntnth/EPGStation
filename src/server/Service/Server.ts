@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import * as openapi from 'express-openapi';
 import * as fs from 'fs';
+import * as http from 'http';
 import * as yaml from 'js-yaml';
 import * as log4js from 'log4js';
 import * as mkdirp from 'mkdirp';
@@ -146,6 +147,7 @@ class Server extends Base {
         this.app.use(this.createUrl('/'), express.static(path.join(__dirname, '..', '..', '..', 'html')));
         this.app.use(this.createUrl('/material-design-icons'), express.static(path.join(__dirname, '..', '..', '..', 'node_modules', 'material-design-icons')));
         this.app.use(this.createUrl('/material-design-lite'), express.static(path.join(__dirname, '..', '..', '..', 'node_modules', 'material-design-lite')));
+        this.app.use(this.createUrl('/css-ripple-effect'), express.static(path.join(__dirname, '..', '..', '..', 'node_modules', 'css-ripple-effect', 'dist')));
         this.app.use(this.createUrl('/js'), express.static(path.join(__dirname, '..', '..', '..', 'dist', 'client')));
         this.app.use(this.createUrl('/css'), express.static(path.join(__dirname, '..', '..', '..', 'dist', 'css')));
         this.app.use(this.createUrl('/img'), express.static(path.join(__dirname, '..', '..', '..', 'img')));
@@ -166,13 +168,19 @@ class Server extends Base {
      * 開始
      */
     public start(): void {
-        const port = this.config.getConfig().serverPort || 8888;
-        const server = this.app.listen(port, () => {
-            this.log.system.info(`listening on ${ port }`);
+        const port = parseInt(<any> this.config.getConfig().serverPort, 10) || 8888;
+        this.app.listen(port, () => {
+            this.log.system.info(`server listening on ${ port }`);
+        });
+
+        // socket.io 用
+        const socketIoServer = http.createServer();
+        socketIoServer.listen(port + 1, () => {
+            this.log.system.info(`SocketIo listening on ${ port + 1}`);
         });
 
         // socket.io
-        (<SocketIoManageModelInterface> factory.get('SocketIoManageModel')).initialize(server);
+        (<SocketIoManageModelInterface> factory.get('SocketIoManageModel')).initialize(socketIoServer);
 
         // encode 終了後
         (<EncodeFinModelInterface> factory.get('EncodeFinModel')).set();
